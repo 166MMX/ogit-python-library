@@ -54,7 +54,7 @@ do_download() {
 do_convert() {
   echo "Converting to RDF..."
   # ./venv/bin/python3 ttl2rdf.py > "$rdf_file" < "$ttl_file"
-  ./pipenv/bin/pipenv run rdfpipe -o rdf "$ttl_file" > "$rdf_file"
+  ./venv/bin/pipenv run rdfpipe -o xml "$ttl_file" > "$rdf_file"
 }
 
 do_generate() {
