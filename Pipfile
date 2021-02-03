@@ -1,0 +1,20 @@
+[[source]]
+url = 'https://pypi.python.org/simple'
+verify_ssl = true
+name = 'pypi'
+
+[packages]
+
+[dev-packages]
+rdflib = '*'
+setuptools = '>=30.3.0'  # build
+setuptools_scm = '>=3.'  # version
+wheel = '*'  # build
+pep517 = '*'  # build
+twine = '*'  # publish
+pytest = '*'  # PyCharm - test
+yappi = '*'  # PyCharm - profiler
+coverage = '*'  # PyCharm - coverage
+
+[requires]
+python_version = '3.9'
