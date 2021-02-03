@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-/libs/
-/src/arago/ogit/version.py
+/libs/  # created by convert.sh containes cached jar file
+/src/arago/ogit/version.py  # build by `make build`
