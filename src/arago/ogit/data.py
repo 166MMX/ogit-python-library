@@ -122,6 +122,8 @@ def namespace_data() -> Generator[Namespace, None, None]:
     yield Namespace(
         prefix='ogit.Price')
     yield Namespace(
+        prefix='ogit.Procurement')
+    yield Namespace(
         prefix='ogit.Project')
     yield Namespace(
         prefix='ogit.RDDL')
@@ -3806,6 +3808,12 @@ def attribute_data() -> Generator[Attribute, None, None]:
         valid='start=2015-04-27;',
         created_by='Chris Walker')
     yield Attribute(
+        about='ogit.Health.Diagnostics:ICDCode',
+        label='ICDCode',
+        description='Code assigned to diagnoses of diseases and other health problems according to ICD (International Classification of Diseases and Related Health Problems). More information at https://icd.who.int/icd11refguide/en/index.html',
+        valid='start=2021-01-21;',
+        created_by='Kaushik Gondaliya')
+    yield Attribute(
         about='ogit.Health.Diagnostics:appID',
         label='appID',
         description='UDI of App (if paired).',
@@ -5144,6 +5152,18 @@ def attribute_data() -> Generator[Attribute, None, None]:
         valid='start=2015-05-21;',
         created_by='Peter Larem')
     yield Attribute(
+        about='ogit.Procurement:productionOrderId',
+        label='salesOrderId',
+        description='Identifier for a production order.',
+        valid='start=2020-12-15;',
+        created_by='Marek Meyer')
+    yield Attribute(
+        about='ogit.Procurement:purchaseOrderId',
+        label='purchaseOrderId',
+        description='Identifier for a purchase order.',
+        valid='start=2020-12-15;',
+        created_by='Marek Meyer')
+    yield Attribute(
         about='ogit.RDDL:purpose',
         label='purpose',
         description='Purpose is derived from xlink:arcrole',
@@ -5209,6 +5229,12 @@ def attribute_data() -> Generator[Attribute, None, None]:
         label='salesOrderId',
         description='Identifier for a sales order.',
         valid='start=2019-07-10;',
+        created_by='Marek Meyer')
+    yield Attribute(
+        about='ogit.SalesDistribution:shipmentId',
+        label='shipmentId',
+        description='Identifier for a shipment.',
+        valid='start=2020-12-15;',
         created_by='Marek Meyer')
     yield Attribute(
         about='ogit.SalesDistribution:transactionDate',
@@ -5751,6 +5777,10 @@ def attribute_data() -> Generator[Attribute, None, None]:
         description='Contains information about the availability of a service/device.',
         valid='start=2015-07-27;',
         created_by='Aymen Ayoub')
+    yield Attribute(
+        about='ogit:blob',
+        label='blob',
+        description='`blob` flag to allow different type to be attached with BLOB. Use it as ogit:blob true;')
     yield Attribute(
         about='ogit:brand',
         label='brand',
@@ -7386,6 +7416,13 @@ def entity_data() -> Generator[Entity, None, None]:
         description='Defines comments for a ticket, issue or another type of entity. Also known as WorkLog, ChangeLog or HistoryEntry.',
         valid='start=2015-05-21;',
         created_by='Peter Larem',
+        scope=Scope.SGO)
+    yield Entity(
+        about='ogit:Configuration',
+        label='Configuration',
+        description='An entity reflects individual configuration for an instance',
+        valid='start=2020-11-15;',
+        created_by='Kaushik Gondaliya',
         scope=Scope.SGO)
     yield Entity(
         about='ogit:ConfigurationItem',
@@ -9934,6 +9971,27 @@ def entity_data() -> Generator[Entity, None, None]:
         created_by='Peter Larem',
         scope=Scope.NTO)
     yield Entity(
+        about='ogit.Procurement:ProductionOrder',
+        label='ProductionOrder',
+        description='A production order in the procurement process.',
+        valid='start=2020-12-15;',
+        created_by='Marek Meyer',
+        scope=Scope.NTO)
+    yield Entity(
+        about='ogit.Procurement:PurchaseOrder',
+        label='PurchaseOrder',
+        description='A purchase order in the procurement process.',
+        valid='start=2020-12-15;',
+        created_by='Marek Meyer',
+        scope=Scope.NTO)
+    yield Entity(
+        about='ogit.Procurement:PurchaseOrderItem',
+        label='PurchaseOrderItem',
+        description='An individual item within a purchase order in the procurement process.',
+        valid='start=2020-12-15;',
+        created_by='Marek Meyer',
+        scope=Scope.NTO)
+    yield Entity(
         about='ogit:Product',
         label='Product',
         description='A commercially distributed good or service',
@@ -10102,6 +10160,13 @@ def entity_data() -> Generator[Entity, None, None]:
         created_by='Marek Meyer',
         scope=Scope.NTO)
     yield Entity(
+        about='ogit.SalesDistribution:Equipment',
+        label='Equipment',
+        description='Equipment used in the sales order process, e.g. a vehicle.',
+        valid='start=2020-12-15;',
+        created_by='Marek Meyer',
+        scope=Scope.NTO)
+    yield Entity(
         about='ogit.SalesDistribution:Invoice',
         label='Invoice',
         description='An invoice for a sales order.',
@@ -10141,6 +10206,20 @@ def entity_data() -> Generator[Entity, None, None]:
         label='SalesOrderItem',
         description='An individual item on a sales order.',
         valid='start=2019-07-10;',
+        created_by='Marek Meyer',
+        scope=Scope.NTO)
+    yield Entity(
+        about='ogit.SalesDistribution:Shipment',
+        label='Shipment',
+        description='A shipment in the sales and distribution process.',
+        valid='start=2020-12-15;',
+        created_by='Marek Meyer',
+        scope=Scope.NTO)
+    yield Entity(
+        about='ogit.SalesDistribution:ShipmentItem',
+        label='ShipmentItem',
+        description='An individual item contained in a shipment in the sales and distribution process.',
+        valid='start=2020-12-15;',
         created_by='Marek Meyer',
         scope=Scope.NTO)
     yield Entity(
@@ -10851,7 +10930,11 @@ def entity_refs() -> Generator[Entity, None, None]:
         optional_attributes={'ogit:description'},
         allowed_connections={
             ('ogit.Auth:belongs', 'ogit.Auth:Organization'),
-            ('ogit.Auth:belongs', 'ogit.Auth:Team')})
+            ('ogit.Auth:belongs', 'ogit.Auth:Team'),
+            ('ogit:approves', 'ogit.Automation:KnowledgeItem'),
+            ('ogit:approves', 'ogit.Knowledge:AcquisitionSession'),
+            ('ogit:rejects', 'ogit.Automation:KnowledgeItem'),
+            ('ogit:rejects', 'ogit.Knowledge:AcquisitionSession')})
     yield Entity(
         about='ogit.Automation:ActionApplicability',
         parent='ogit:Node',
@@ -11245,6 +11328,13 @@ def entity_refs() -> Generator[Entity, None, None]:
             ('ogit:responds', 'ogit.Forum:Rating'),
             ('ogit:responds', 'ogit.Forum:Reply'),
             ('ogit:seenBy', 'ogit.Auth:Account')})
+    yield Entity(
+        about='ogit:Configuration',
+        parent='ogit:Node',
+        optional_attributes={
+            'ogit:description',
+            'ogit:id',
+            'ogit:name'})
     yield Entity(
         about='ogit:ConfigurationItem',
         parent='ogit:Node',
@@ -12601,6 +12691,7 @@ def entity_refs() -> Generator[Entity, None, None]:
         about='ogit.Health.Diagnostics:Test',
         parent='ogit:Node',
         optional_attributes={
+            'ogit.Health.Diagnostics:ICDCode',
             'ogit.Health.Diagnostics:appID',
             'ogit.Health.Diagnostics:equipmentID',
             'ogit.Health.Diagnostics:errorCode',
@@ -13093,6 +13184,9 @@ def entity_refs() -> Generator[Entity, None, None]:
             'ogit.Mobile:healthStatus',
             'ogit.Mobile:healthStatusUpdateTime',
             'ogit.Mobile:label',
+            'ogit.Mobile:licenceCode'},
+        indexed_attributes={
+            'ogit.Mobile:label',
             'ogit.Mobile:licenceCode'})
     yield Entity(
         about='ogit.Mobile:LicenceCodes',
@@ -13106,6 +13200,10 @@ def entity_refs() -> Generator[Entity, None, None]:
             'ogit.Mobile:isActive',
             'ogit.Mobile:label',
             'ogit.Mobile:lastActive',
+            'ogit.Mobile:licenceCode'},
+        indexed_attributes={
+            'ogit.Mobile:deviceCode',
+            'ogit.Mobile:label',
             'ogit.Mobile:licenceCode'})
     yield Entity(
         about='ogit.Mobile:Message',
@@ -14207,6 +14305,36 @@ def entity_refs() -> Generator[Entity, None, None]:
         about='ogit.Price:PriceSpecification',
         parent='ogit:Node')
     yield Entity(
+        about='ogit.Procurement:ProductionOrder',
+        parent='ogit:Node',
+        optional_attributes={
+            'ogit.Procurement:productionOrderId',
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit:description',
+            'ogit:name'})
+    yield Entity(
+        about='ogit.Procurement:PurchaseOrder',
+        parent='ogit:Node',
+        optional_attributes={
+            'ogit.Procurement:purchaseOrderId',
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit:description',
+            'ogit:name'},
+        allowed_connections={('ogit:contains', 'ogit.Procurement:PurchaseOrderItem')})
+    yield Entity(
+        about='ogit.Procurement:PurchaseOrderItem',
+        parent='ogit:Node',
+        optional_attributes={
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit:description',
+            'ogit:name'})
+    yield Entity(
         about='ogit:Product',
         parent='ogit:Node',
         optional_attributes={'ogit:name'})
@@ -14374,18 +14502,47 @@ def entity_refs() -> Generator[Entity, None, None]:
     yield Entity(
         about='ogit.SalesDistribution:Delivery',
         parent='ogit:Node',
-        optional_attributes={'ogit.SalesDistribution:deliveryId'},
-        allowed_connections={('ogit:contains', 'ogit.SalesDistribution:DeliveryItem')})
+        optional_attributes={
+            'ogit.SalesDistribution:deliveryId',
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit:description',
+            'ogit:name'},
+        allowed_connections={
+            ('ogit:assignedTo', 'ogit.SalesDistribution:Shipment'),
+            ('ogit:contains', 'ogit.SalesDistribution:DeliveryItem')})
     yield Entity(
         about='ogit.SalesDistribution:DeliveryItem',
         parent='ogit:Node',
-        allowed_connections={('ogit:corresponds', 'ogit.SalesDistribution:InvoiceItem')})
+        optional_attributes={
+            'ogit:description',
+            'ogit:name'},
+        allowed_connections={
+            ('ogit:corresponds', 'ogit.SalesDistribution:InvoiceItem'),
+            ('ogit:corresponds', 'ogit.SalesDistribution:ShipmentItem')})
+    yield Entity(
+        about='ogit.SalesDistribution:Equipment',
+        parent='ogit:Node',
+        optional_attributes={
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit:description',
+            'ogit:name'})
     yield Entity(
         about='ogit.SalesDistribution:Invoice',
         parent='ogit:Node',
         optional_attributes={
             'ogit.SalesDistribution:invoiceDate',
-            'ogit.SalesDistribution:invoiceId'},
+            'ogit.SalesDistribution:invoiceId',
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit.SalesDistribution:invoiceDate',
+            'ogit.SalesDistribution:invoiceId',
+            'ogit:description',
+            'ogit:name'},
         allowed_connections={('ogit:contains', 'ogit.SalesDistribution:InvoiceItem')})
     yield Entity(
         about='ogit.SalesDistribution:InvoiceItem',
@@ -14393,6 +14550,7 @@ def entity_refs() -> Generator[Entity, None, None]:
         optional_attributes={
             'ogit.SalesDistribution:amount',
             'ogit:currency',
+            'ogit:description',
             'ogit:name'},
         allowed_connections={('ogit:corresponds', 'ogit.SalesDistribution:OpenItem')})
     yield Entity(
@@ -14401,6 +14559,7 @@ def entity_refs() -> Generator[Entity, None, None]:
         optional_attributes={
             'ogit.SalesDistribution:amount',
             'ogit:currency',
+            'ogit:description',
             'ogit:name'},
         allowed_connections={('ogit:belongs', 'ogit.SalesDistribution:Payment')})
     yield Entity(
@@ -14429,11 +14588,38 @@ def entity_refs() -> Generator[Entity, None, None]:
             'ogit:status'},
         allowed_connections={
             ('ogit:belongs', 'ogit.MARS:Application'),
-            ('ogit:contains', 'ogit.SalesDistribution:SalesOrderItem')})
+            ('ogit:causes', 'ogit.SalesDistribution:Delivery'),
+            ('ogit:causes', 'ogit.SalesDistribution:Invoice'),
+            ('ogit:contains', 'ogit.SalesDistribution:SalesOrderItem'),
+            ('ogit:triggers', 'ogit.Procurement:ProductionOrder'),
+            ('ogit:triggers', 'ogit.Procurement:PurchaseOrder')})
     yield Entity(
         about='ogit.SalesDistribution:SalesOrderItem',
         parent='ogit:Node',
+        optional_attributes={
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit:description',
+            'ogit:name'},
         allowed_connections={('ogit:corresponds', 'ogit.SalesDistribution:DeliveryItem')})
+    yield Entity(
+        about='ogit.SalesDistribution:Shipment',
+        parent='ogit:Node',
+        optional_attributes={
+            'ogit.SalesDistribution:shipmentId',
+            'ogit:description',
+            'ogit:name'},
+        indexed_attributes={
+            'ogit:description',
+            'ogit:name'},
+        allowed_connections={('ogit:contains', 'ogit.SalesDistribution:ShipmentItem')})
+    yield Entity(
+        about='ogit.SalesDistribution:ShipmentItem',
+        parent='ogit:Node',
+        optional_attributes={
+            'ogit:description',
+            'ogit:name'})
     yield Entity(
         about='ogit.Schedule:Activity',
         parent='ogit:Node',
