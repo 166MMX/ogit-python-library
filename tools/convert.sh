@@ -30,14 +30,15 @@ EOF
     rm "$generated_file"
 }
 
+build_dir="$PWD/build/ogit"
+gen_dir="$build_dir/generated"
+dst_dir="$PWD/src"
 saxon_src_url='https://repo1.maven.org/maven2/net/sf/saxon/Saxon-HE/9.9.1-8/Saxon-HE-9.9.1-8.jar'
 src_url='https://graphit.co/schemas/graphit-ontology.ttl'
-ttl_file="graphit-ontology-$(date +%Y-%m-%d).ttl"
-rdf_file="graphit-ontology-$(date +%Y-%m-%d).rdf"
+ttl_file="$build_dir/graphit-ontology-$(date +%Y-%m-%d).ttl"
+rdf_file="$build_dir/graphit-ontology-$(date +%Y-%m-%d).rdf"
 jar_file='libs/saxon9he.jar'
 xsl_file='tools/python.xslt'
-gen_dir="$PWD/generated"
-dst_dir="$PWD"
 
 do_download() {
   echo 'Downloading '\''graphit-ontology.ttl'\''...'
@@ -67,19 +68,21 @@ do_generate() {
 do_update() {
   echo 'Updating sources...'
 
-  target_dir="$dst_dir/src/arago/ogit"
+  target_dir="$dst_dir/arago/ogit"
   target_file="$target_dir/data.py"
-  substitute '    ' 'generated attribute data'  "$target_file"  'Attribute.data.generated.py'
-  substitute '    ' 'generated entity data'     "$target_file"     'Entity.data.generated.py'
-  substitute '    ' 'generated entity refs'     "$target_file"     'Entity.refs.generated.py'
-  substitute '    ' 'generated namespace data'  "$target_file"  'Namespace.data.generated.py'
-  substitute '    ' 'generated verb data'       "$target_file"       'Verb.data.generated.py'
+  substitute '    ' 'generated attribute data'     "$target_file"  "$gen_dir/Attribute.data.generated.py"
+  substitute '    ' 'generated entity data'        "$target_file"     "$gen_dir/Entity.data.generated.py"
+  substitute '    ' 'generated entity refs'        "$target_file"     "$gen_dir/Entity.refs.generated.py"
+  substitute '    ' 'generated namespace data'     "$target_file"  "$gen_dir/Namespace.data.generated.py"
+  substitute '    ' 'generated verb data'          "$target_file"       "$gen_dir/Verb.data.generated.py"
   target_file="$target_dir/__init__.py"
-  substitute '    ' 'generated attribute members'  "$target_file"  'Attribute.members.generated.py'
-  substitute '    ' 'generated entity members'     "$target_file"     'Entity.members.generated.py'
-  substitute '    ' 'generated namespace members'  "$target_file"  'Namespace.members.generated.py'
-  substitute '    ' 'generated verb members'       "$target_file"       'Verb.members.generated.py'
+  substitute '    ' 'generated attribute members'  "$target_file"  "$gen_dir/Attribute.members.generated.py"
+  substitute '    ' 'generated entity members'     "$target_file"     "$gen_dir/Entity.members.generated.py"
+  substitute '    ' 'generated namespace members'  "$target_file"  "$gen_dir/Namespace.members.generated.py"
+  substitute '    ' 'generated verb members'       "$target_file"       "$gen_dir/Verb.members.generated.py"
 }
+
+[ -d "$build_dir" ] || mkdir -p "$build_dir"
 
 do_download  "$src_url"   "$ttl_file"
 do_convert   "$ttl_file"  "$rdf_file"
