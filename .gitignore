@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 /libs/
+/src/arago/ogit/version.py
