@@ -547,7 +547,6 @@ import groovy.transform.CompileStatic
 
     <xsl:template name="namespace_enum_member">
         <xsl:param name="uri" as="xs:string"/>
-        <xsl:text>    </xsl:text>
         <xsl:variable name="const" select="a:to_constant($uri)"/>
         <xsl:value-of select="$const"/>
         <xsl:text> = </xsl:text>
